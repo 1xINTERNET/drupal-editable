@@ -32,7 +32,6 @@
     "namespace": "Editable_Core",
     "isEditableCore": "true"
   },
-  "dependencies": {},
   "publishConfig": {
     "access": "public"
   }
