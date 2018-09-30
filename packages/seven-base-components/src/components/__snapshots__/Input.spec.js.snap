@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Input should render correctly 1`] = `
+<div
+  className="form-item editable--form-item editable--form-item--input"
+>
+  <label
+    className="editable--label"
+    htmlFor="input_1"
+  >
+    testLabel
+  </label>
+  <div
+    className="editable--input-wrapper css-1psltl0"
+  >
+    <input
+      className="form-text editable--form-text editable--form-text--input"
+      data-prop-path={null}
+      disabled={false}
+      id="input_1"
+      onChange={[Function]}
+      placeholder=""
+      type="text"
+      value="testValue"
+    />
+  </div>
+</div>
+`;

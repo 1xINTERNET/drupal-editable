@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Spinner should render correctly 1`] = `
+<div
+  aria-label="Loading"
+  className="css-h0lbk4 editable--spinner"
+/>
+`;
