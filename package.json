@@ -11,6 +11,12 @@
     "lint": "lerna run lint",
     "commit": "git-cz"
   },
+  "author": "Martin Spencer <martin@1xinternet.de>",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "github:1xINTERNET/drupal-editable"
+  },
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
