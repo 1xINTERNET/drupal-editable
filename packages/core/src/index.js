@@ -1,10 +1,5 @@
 import "./polyfills";
 
-// Create and export the shared redux store.
-import { createStore } from "./utils";
-
-export const store = createStore();
-
 // Alias and export other utility functions.
 export { default as get } from "lodash.get";
 export { default as set } from "immutable-set";
@@ -20,5 +15,7 @@ export {
   deleteResource,
   hydrateStore
 } from "redux-json-api";
+
+export { createStore } from "./utils";
 export { DataSet, Query, EditableEntity } from "./components";
 export { getQueryFromEntityReference, getQueryFromRIO } from "./normalizers";
