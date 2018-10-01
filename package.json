@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "test": "cross-env NODE_ENV=test jest",
+    "test:coverage": "cross-env NODE_ENV=test jest --coverage --coverageReporters=text-lcov | coveralls",
     "format": "lerna run format",
     "build": "lerna run build",
     "build:dev": "lerna run build:dev",
