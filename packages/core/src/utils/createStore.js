@@ -37,8 +37,9 @@ export const createStore = async ({
       composeWithDevTools(applyMiddleware(thunk, ...middlewares), ...enhancers)
     );
 
+    let token;
     if (loadCSRFToken) {
-      const token = await fetch(csrfTokenEndpoint).then(res => res.text());
+      token = await fetch(csrfTokenEndpoint).then(res => res.text());
     }
 
     store.dispatch(
