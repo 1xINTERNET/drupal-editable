@@ -11,8 +11,7 @@ export const createStore = ({
   reducers = {},
   middlewares = [],
   enhancers = [],
-  apiTokenEndpoint,
-  apiHost,
+  csrfTokenEndpoint,
   apiEndpoint,
   loadCSRFToken = true
 }) => {
@@ -21,9 +20,9 @@ export const createStore = ({
       "You will need to call createStore with an `apiEndpoint` pointing to the publicly accessible URL to your JSON:API!"
     );
   }
-  if ((loadCSRFToken && !apiHost) || !apiTokenEndpoint) {
+  if (loadCSRFToken && !csrfTokenEndpoint) {
     throw new Error(
-      "Either call createStore with `loadCSRFToken: false ` or provide an `apiHost` or `apiTokenEndpoint`!"
+      "Either call createStore with `loadCSRFToken: false ` or provide an `csrfTokenEndpoint`!"
     );
   }
 
@@ -53,8 +52,7 @@ export const createStore = ({
 
   // Initialize API with a token if we have the parameters for it.
   if (loadCSRFToken) {
-    const apiTokenAddress = apiTokenEndpoint || `${apiHost}/rest/session/token`;
-    fetch()
+    fetch(csrfTokenEndpoint)
       .then(res => res.text())
       .then(token => initialiseApi);
   } else {
