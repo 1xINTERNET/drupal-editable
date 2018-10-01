@@ -1,8 +1,9 @@
 # Drupal-editable
 
+![npm](https://img.shields.io/npm/v/@drupal-editable/core.svg)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
-[![Drupal 8](https://img.shields.io/badge/Made%20for-Drupal%208-0678be.svg)](https://lernajs.io/)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![Drupal 8](https://img.shields.io/badge/Made%20for-Drupal%208-0678be.svg)](http://drupal.org/)
+[![Commitizen friendly](https://img.shields.io/badge/semantic-commits-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![code style: prettier](https://img.shields.io/badge/code%20style-prettier-ff69b4.svg)](https://prettier.io/)
 
 > JS library framework to decouple Drupal.
