@@ -7,7 +7,7 @@ module.exports = opts => ({
     "prop-types": "PropTypes",
     // editable core should also be excluded from the bundle
     ...(process.env.NODE_ENV !== "test"
-      ? { "@drupal-editable/core": "Editable" }
+      ? { "@drupal-editable/core": "Editable_Core" }
       : {}),
     // @TODO use callback function here to externalise all the other editable
     // libs
