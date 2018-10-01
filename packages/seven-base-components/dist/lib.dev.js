@@ -1,12 +1,12 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("Editable"), require("PropTypes"), require("React"));
+		module.exports = factory(require("Editable_Core"), require("PropTypes"), require("React"));
 	else if(typeof define === 'function' && define.amd)
-		define(["Editable", "PropTypes", "React"], factory);
+		define(["Editable_Core", "PropTypes", "React"], factory);
 	else if(typeof exports === 'object')
-		exports["Editable_SevenBaseComponents"] = factory(require("Editable"), require("PropTypes"), require("React"));
+		exports["Editable_SevenBaseComponents"] = factory(require("Editable_Core"), require("PropTypes"), require("React"));
 	else
-		root["Editable_SevenBaseComponents"] = factory(root["Editable"], root["PropTypes"], root["React"]);
+		root["Editable_SevenBaseComponents"] = factory(root["Editable_Core"], root["PropTypes"], root["React"]);
 })(window, function(__WEBPACK_EXTERNAL_MODULE__drupal_editable_core__, __WEBPACK_EXTERNAL_MODULE_prop_types__, __WEBPACK_EXTERNAL_MODULE_react__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -178,13 +178,13 @@ eval("module.exports = __webpack_require__(/*! /Users/martin/Code/drupal-editabl
 /***/ }),
 
 /***/ "@drupal-editable/core":
-/*!***************************!*\
-  !*** external "Editable" ***!
-  \***************************/
+/*!********************************!*\
+  !*** external "Editable_Core" ***!
+  \********************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("module.exports = __WEBPACK_EXTERNAL_MODULE__drupal_editable_core__;\n\n//# sourceURL=webpack://Editable_SevenBaseComponents/external_%22Editable%22?");
+eval("module.exports = __WEBPACK_EXTERNAL_MODULE__drupal_editable_core__;\n\n//# sourceURL=webpack://Editable_SevenBaseComponents/external_%22Editable_Core%22?");
 
 /***/ }),
 
