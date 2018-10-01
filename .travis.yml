@@ -9,7 +9,7 @@ cache:
 install:
   - npm prune
   - npm install
-  - npm update
+  - lerna exec 'npm install'
 script:
   - npm run lint
   - npm run test:coverage
