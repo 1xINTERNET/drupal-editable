@@ -24,19 +24,6 @@ export class EditableEntityPresentational extends PureComponent {
   state = { changes: null, saving: false, error: null };
 
   /**
-   * Cached version of a debounced save function
-   *
-   * @private
-   */
-  debouncedSave = null;
-
-  constructor(props) {
-    super(props);
-
-    this.debouncedSave = debounce(this.save, 1000);
-  }
-
-  /**
    * Get the data at a specific path. This method tries to resolve the path to
    * any local changes that are applied, and if there are none it uses the
    * original entity data.
@@ -60,35 +47,6 @@ export class EditableEntityPresentational extends PureComponent {
     const { data } = this.props;
     return this._applyChanges(data);
   };
-
-  /**
-   * Handle a change event from an input element
-   *
-   * @param {SyntheticEvent} evt The change event
-   * @return {Promise<void>} Resolved when the entity was changed
-   */
-  handleChange = async ({
-    target: {
-      value: propValue,
-      dataset: { propPath }
-    }
-  }) => {
-    if (!propPath) {
-      throw new Error(
-        "No data-prop-path was set on the input element! This change operation failed!"
-      );
-    }
-    return this.change(propPath, propValue);
-  };
-
-  /**
-   * Handle a change event from an input element and save eventually
-   *
-   * @param {SyntheticEvent} evt The change event
-   * @return {Promise<void>} Resolved when the entity was saved
-   */
-  handleChangeAndSave = async evt =>
-    this.handleChange(evt).then(this.debouncedSave);
 
   /**
    * Change the entity without saving it
@@ -216,8 +174,6 @@ export class EditableEntityPresentational extends PureComponent {
     return children({
       change: this.change,
       save: this.save,
-      handleChange: this.handleChange,
-      handleChangeAndSave: this.handleChangeAndSave,
       getData: this.getData,
       getAllData: this.getAllData,
       saving,
