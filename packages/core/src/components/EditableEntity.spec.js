@@ -7,9 +7,6 @@ import * as reduxJsonApi from "redux-json-api";
 
 import { EditableEntityPresentational } from ".";
 
-const dispatchFn = jest.fn(() => null);
-const renderFn = jest.fn();
-
 const BUNDLE_PROP = "bundle";
 const TYPE_PROP = "type";
 const UUID_PROP = "uuid";
@@ -44,45 +41,113 @@ const ENTITY = {
     complexField: ORIGINAL_FIELD_3_VALUE
   }
 };
+const flushPromises = () => {
+  return new Promise(resolve => setImmediate(resolve));
+};
+const firstCallArg = mockFn => mockFn.mock.calls[0][0];
 
 describe("EditableEntity", () => {
   let component;
-  let updateEndpointSpy;
+  let createResourceSpy;
+  let updateResourceSpy;
+  let deleteResourceSpy;
+  let onSaveFn;
+  let onRemoveFn;
+  let onCreateFn;
+  let dispatchFn;
+  let renderFn;
 
   beforeEach(() => {
-    updateEndpointSpy = jest
+    createResourceSpy = jest
+      .spyOn(reduxJsonApi, "createResource")
+      .mockImplementation(
+        k =>
+          new Promise(resolve =>
+            setTimeout(() =>
+              resolve({
+                data: {
+                  ...k,
+                  ...ENTITY_BASICS
+                }
+              })
+            )
+          )
+      );
+    updateResourceSpy = jest
       .spyOn(reduxJsonApi, "updateResource")
-      .mockImplementation(k => k);
+      .mockImplementation(
+        k =>
+          new Promise(resolve =>
+            setTimeout(() =>
+              resolve({
+                data: {
+                  ...k,
+                  ...ENTITY_BASICS
+                }
+              })
+            )
+          )
+      );
+    deleteResourceSpy = jest
+      .spyOn(reduxJsonApi, "deleteResource")
+      .mockImplementation(
+        k => new Promise(resolve => setTimeout(() => resolve(k)))
+      );
+
+    dispatchFn = jest.fn(k => k);
+    renderFn = jest.fn();
+    onSaveFn = jest.fn();
+    onRemoveFn = jest.fn();
+    onCreateFn = jest.fn();
 
     component = shallow(
-      <EditableEntityPresentational data={ENTITY} dispatch={dispatchFn}>
+      <EditableEntityPresentational
+        data={ENTITY}
+        dispatch={dispatchFn}
+        onCreate={onCreateFn}
+        onSave={onSaveFn}
+        onRemove={onRemoveFn}
+      >
         {renderFn}
       </EditableEntityPresentational>
     );
   });
 
   afterEach(() => {
-    updateEndpointSpy.mockClear();
+    createResourceSpy.mockClear();
+    updateResourceSpy.mockClear();
+    deleteResourceSpy.mockClear();
+    dispatchFn.mockClear();
+    renderFn.mockClear();
+    onSaveFn.mockClear();
+    onRemoveFn.mockClear();
+    onCreateFn.mockClear();
   });
 
   it("should call the render function correctly", () => {
     const {
       change,
       save,
+      remove,
       handleChange,
       handleChangeAndSave,
       getData,
       getAllData,
       saving,
+      working,
+      creating,
       error
     } = renderFn.mock.calls[0][0];
     expect(change).toBeDefined();
+    expect(remove).toBeDefined();
     expect(save).toBeDefined();
     expect(handleChange).toBeDefined();
     expect(handleChangeAndSave).toBeDefined();
     expect(getData).toBeDefined();
     expect(getAllData).toBeDefined();
     expect(saving).toBe(false);
+    expect(creating).toBe(false);
+    expect(working).toBe(false);
     expect(error).toBe(null);
   });
 
@@ -160,41 +225,55 @@ describe("EditableEntity", () => {
     );
   });
 
-  it("should not call updateEndpoint in save method if there were no local changes", async () => {
+  it("should not call updateResource/createResource in save method if there were no local changes", async () => {
     await component.instance().save();
-    expect(updateEndpointSpy.mock.calls.length).toBe(0);
+    expect(updateResourceSpy.mock.calls.length).toBe(0);
+    expect(createResourceSpy.mock.calls.length).toBe(0);
   });
 
-  it("should call updateEndpoint with the correct entity payload when saving", async () => {
+  it("should call createResource in save method if resource is new. Afterwards it should call the onCreate and onSave callbacks.", async () => {
+    component.setProps({
+      data: null
+    });
     await component.instance().change(FIELD_1_ADDRESS, CHANGED_FIELD_1_VALUE);
     await component.instance().save();
-    expect(updateEndpointSpy.mock.calls[0][0]).toEqual({
+    expect(firstCallArg(createResourceSpy)).toEqual({
+      attributes: {
+        field: CHANGED_FIELD_1_VALUE
+      }
+    });
+    expect(firstCallArg(onCreateFn)).toEqual(ENTITY_BASICS);
+    expect(firstCallArg(onSaveFn)).toEqual(ENTITY_BASICS);
+  });
+
+  it("should call updateResource in save method if resource is not new. Afterwards it should call the onSave callback.", async () => {
+    await component.instance().change(FIELD_1_ADDRESS, CHANGED_FIELD_1_VALUE);
+    await component.instance().save();
+    expect(firstCallArg(updateResourceSpy)).toEqual({
       attributes: {
         field: CHANGED_FIELD_1_VALUE
       },
       ...ENTITY_BASICS
     });
+    expect(firstCallArg(onSaveFn)).toEqual(ENTITY_BASICS);
   });
 
-  it("should set the correct saving state when saving", async () => {
-    updateEndpointSpy = jest
-      .spyOn(reduxJsonApi, "updateResource")
-      .mockImplementation(() => new Promise(resolve => setTimeout(resolve, 0)));
-
+  it("should set the correct saving state when saving", async done => {
     await component.instance().change(FIELD_1_ADDRESS, CHANGED_FIELD_1_VALUE);
     component.instance().save();
     expect(component.state("changes")).toEqual({
       [FIELD_1_ADDRESS]: CHANGED_FIELD_1_VALUE
     });
-    await Promise.resolve();
+    expect(component.state("saving")).toEqual([FIELD_1_ADDRESS]);
+    expect(component.state("working")).toBe(true);
   });
 
-  it("should call updateEndpoint with a payload including complete complex fields", async () => {
+  it("should call updateResource with a payload including complete complex fields", async () => {
     await component
       .instance()
       .change(FIELD_3_1_ADDRESS, CHANGED_FIELD_3_1_VALUE);
     await component.instance().save();
-    expect(updateEndpointSpy.mock.calls[0][0]).toEqual({
+    expect(firstCallArg(updateResourceSpy)).toEqual({
       attributes: {
         complexField: {
           subField: CHANGED_FIELD_3_1_VALUE,
@@ -209,7 +288,7 @@ describe("EditableEntity", () => {
     /* eslint-disable no-console */
     const _consoleerror = console.error;
     console.error = jest.fn();
-    updateEndpointSpy = jest
+    updateResourceSpy = jest
       .spyOn(reduxJsonApi, "updateResource")
       .mockImplementation(() => {
         throw new Error("Failed!");
@@ -219,5 +298,27 @@ describe("EditableEntity", () => {
     expect(component.state("error")).toBe("There was an error saving!");
     console.error = _consoleerror;
     /* eslint-enable no-console */
+  });
+
+  it("should call removeResource in remove method. Afterwards it should call the onRemove callback.", async () => {
+    await component.instance().remove();
+    expect(firstCallArg(deleteResourceSpy)).toEqual(ENTITY);
+    expect(firstCallArg(onRemoveFn)).toEqual(ENTITY_BASICS);
+  });
+
+  it("should throw an error if trying to call the remove method when there is no data", async () => {
+    /* eslint-disable no-console */
+    const _consoleerror = console.error;
+    console.error = jest.fn();
+    component.setProps({
+      data: null
+    });
+    await component.instance().remove();
+    expect(component.state("error")).toBe(
+      "There was an error removing the resource!"
+    );
+    expect(component.state("removing")).toBe(false);
+    expect(component.state("working")).toBe(false);
+    console.error = _consoleerror;
   });
 });
