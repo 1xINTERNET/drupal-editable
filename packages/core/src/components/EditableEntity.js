@@ -1,7 +1,7 @@
 import { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { updateResource } from "redux-json-api";
+import { updateResource, createResource, deleteResource } from "redux-json-api";
 import set from "immutable-set";
 import get from "lodash.get";
 import debounce from "lodash.debounce";
@@ -15,13 +15,28 @@ export class EditableEntityPresentational extends PureComponent {
       type: PropTypes.string.isRequired,
       data: PropTypes.object
     }),
+    onCreate: PropTypes.func,
+    onSave: PropTypes.func,
+    onRemove: PropTypes.func,
     children: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired
   };
 
-  static defaultProps = { data: null };
+  static defaultProps = {
+    data: null,
+    onCreate: () => null,
+    onSave: () => null,
+    onRemove: () => null
+  };
 
-  state = { changes: null, saving: false, error: null };
+  state = {
+    changes: null,
+    creating: false,
+    deleting: false,
+    error: null,
+    saving: false,
+    working: false
+  };
 
   /**
    * Get the data at a specific path. This method tries to resolve the path to
@@ -66,33 +81,79 @@ export class EditableEntityPresentational extends PureComponent {
    * @return {Promise<void>} Resolved when the entity was updated
    */
   save = async () => {
-    const {
-      dispatch,
-      data: { id, type }
-    } = this.props;
+    const { dispatch, data, onCreate, onSave } = this.props;
     const { changes } = this.state;
+    const isNew = !data;
 
     try {
       if (changes) {
-        await this._setState({ saving: Object.keys(changes) });
-        const entityWithChanges = this._applyChanges(
-          {
-            id,
-            type
-          },
-          true
+        await this._setState({
+          creating: isNew,
+          saving: Object.keys(changes),
+          working: true
+        });
+        const baseData = isNew
+          ? {}
+          : {
+              id: data.id,
+              type: data.type
+            };
+        const entityWithChanges = this._applyChanges(baseData, true);
+        const action = isNew ? createResource : updateResource;
+        const result = await dispatch(
+          action(entityWithChanges, apiEndpointConstructor)
         );
-        await dispatch(
-          updateResource(entityWithChanges, apiEndpointConstructor)
-        );
+        if (result) {
+          const {
+            data: { id, type }
+          } = result;
+          onSave({ id, type });
+          isNew && onCreate({ id, type });
+        }
       }
-      await this._setState({ changes: null, saving: false });
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
       await this._setState({
+        changes: null,
+        creating: false,
         saving: false,
-        error: "There was an error saving!"
+        working: false
+      });
+    } catch (e) {
+      this._log(e);
+      await this._setState({
+        creating: false,
+        error: "There was an error saving!",
+        saving: false,
+        working: false
+      });
+    }
+  };
+
+  remove = async () => {
+    const { data, dispatch, onRemove } = this.props;
+    try {
+      if (!data) {
+        throw new Error("No data available! Cannot remove resource.");
+      }
+      await this._setState({
+        removing: true,
+        working: true
+      });
+      await dispatch(deleteResource(data));
+      onRemove({
+        id: data.id,
+        type: data.type
+      });
+      await this._setState({
+        changes: null,
+        removing: false,
+        working: false
+      });
+    } catch (e) {
+      this._log(e);
+      await this._setState({
+        removing: false,
+        error: "There was an error removing the resource!",
+        working: false
       });
     }
   };
@@ -116,6 +177,17 @@ export class EditableEntityPresentational extends PureComponent {
     delete newChanges[propName];
     return this._setState({ changes: newChanges });
   };
+
+  /**
+   * A utility function to print an error to console log.
+   *
+   * @private
+   * @param {string} str The string to print
+   */
+  _log(str) {
+    // eslint-disable-next-line no-console-log
+    console.error(str);
+  }
 
   /**
    * setState but it's a promise
@@ -169,15 +241,19 @@ export class EditableEntityPresentational extends PureComponent {
 
   render() {
     const { children } = this.props;
-    const { saving, error } = this.state;
+    const { creating, error, saving, removing, working } = this.state;
 
     return children({
       change: this.change,
       save: this.save,
+      remove: this.remove,
       getData: this.getData,
       getAllData: this.getAllData,
+      creating,
+      error,
       saving,
-      error
+      removing,
+      working
     });
   }
 }
