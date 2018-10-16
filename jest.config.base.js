@@ -2,7 +2,7 @@ module.exports = {
   snapshotSerializers: ["enzyme-to-json/serializer"],
   setupFiles: ["./setupTests.js"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  collectCoverage: true,
+  collectCoverage: false,
   coveragePathIgnorePatterns: [
     "^setupTests.js$",
     "(tests/.*.mock).(jsx?|tsx?)$"

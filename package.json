@@ -3,12 +3,19 @@
   "private": true,
   "scripts": {
     "test": "cross-env NODE_ENV=test jest",
+    "test:coverage": "cross-env NODE_ENV=test jest --coverage --coverageReporters=text-lcov | coveralls",
     "format": "lerna run format",
     "build": "lerna run build",
     "build:dev": "lerna run build:dev",
     "build:prod": "lerna run build:prod",
     "lint": "lerna run lint",
     "commit": "git-cz"
+  },
+  "author": "Martin Spencer <martin@1xinternet.de>",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "github:1xINTERNET/drupal-editable"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -22,6 +29,7 @@
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.4",
     "classnames": "^2.2.6",
+    "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
     "cz-conventional-changelog": "^2.1.0",
     "emotion": "^9.2.10",
