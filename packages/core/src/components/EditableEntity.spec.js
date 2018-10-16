@@ -129,8 +129,6 @@ describe("EditableEntity", () => {
       change,
       save,
       remove,
-      handleChange,
-      handleChangeAndSave,
       getData,
       getAllData,
       saving,
@@ -141,8 +139,6 @@ describe("EditableEntity", () => {
     expect(change).toBeDefined();
     expect(remove).toBeDefined();
     expect(save).toBeDefined();
-    expect(handleChange).toBeDefined();
-    expect(handleChangeAndSave).toBeDefined();
     expect(getData).toBeDefined();
     expect(getAllData).toBeDefined();
     expect(saving).toBe(false);
@@ -169,20 +165,6 @@ describe("EditableEntity", () => {
 
   it("should change entity when calling change method", async () => {
     await component.instance().change(FIELD_1_ADDRESS, CHANGED_FIELD_1_VALUE);
-    expect(component.instance().getData(FIELD_1_ADDRESS)).toBe(
-      CHANGED_FIELD_1_VALUE
-    );
-  });
-
-  it("should change entity when calling handleChange method", async () => {
-    await component.instance().handleChange({
-      target: {
-        dataset: {
-          propPath: FIELD_1_ADDRESS
-        },
-        value: CHANGED_FIELD_1_VALUE
-      }
-    });
     expect(component.instance().getData(FIELD_1_ADDRESS)).toBe(
       CHANGED_FIELD_1_VALUE
     );
