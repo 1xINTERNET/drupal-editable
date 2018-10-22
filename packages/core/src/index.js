@@ -1,14 +1,16 @@
 import "./polyfills";
 
-// Alias and export other utility functions.
-export { default as get } from "lodash.get";
-export { default as set } from "immutable-set";
-export { default as debounce } from "lodash.debounce";
-export { default as cx } from "classnames";
-export { connect, Provider } from "react-redux";
-export { css, keyframes } from "emotion";
-export { createSelector } from "reselect";
-export {
+// Utilities:
+import get from "lodash.get";
+import set from "immutable-set";
+import debounce from "lodash.debounce";
+import cx from "classnames";
+import { connect, Provider } from "react-redux";
+import { css, keyframes } from "emotion";
+import { createSelector } from "reselect";
+
+// API actions:
+import {
   createResource,
   readEndpoint,
   updateResource,
@@ -16,6 +18,36 @@ export {
   hydrateStore
 } from "redux-json-api";
 
-export { createStore } from "./utils";
-export { DataSet, Query, EditableEntity } from "./components";
-export { getQueryFromEntityReference, getQueryFromRIO } from "./normalizers";
+// Editable core functionality:
+import { createStore } from "./utils";
+import {
+  DataSet,
+  Query,
+  EditableEntity,
+  EditableEntityForm
+} from "./components";
+import { getQueryFromEntityReference, getQueryFromRIO } from "./normalizers";
+
+export {
+  get,
+  set,
+  debounce,
+  cx,
+  connect,
+  Provider,
+  css,
+  keyframes,
+  createSelector,
+  createResource,
+  readEndpoint,
+  updateResource,
+  deleteResource,
+  hydrateStore,
+  createStore,
+  DataSet,
+  Query,
+  EditableEntity,
+  EditableEntityForm,
+  getQueryFromEntityReference,
+  getQueryFromRIO
+};
