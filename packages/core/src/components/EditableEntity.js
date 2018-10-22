@@ -9,6 +9,8 @@ import debounce from "lodash.debounce";
 import { apiEndpointConstructor } from "../utils";
 
 export class EditableEntityPresentational extends PureComponent {
+  static displayName = "EditableEntity";
+
   static propTypes = {
     data: PropTypes.shape({
       id: PropTypes.string.isRequired,

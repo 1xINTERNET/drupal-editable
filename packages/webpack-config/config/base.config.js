@@ -3,16 +3,35 @@ const eslintFormatter = require("react-dev-utils/eslintFormatter");
 const webpack = require("webpack");
 
 module.exports = opts => {
+  console.log(opts.bundleName);
   return {
-    entry: [path.resolve(opts.sourceDirectory, "index.js")],
+    entry: [path.resolve(opts.sourceDirectory, "index")],
     output: {
       path: opts.buildDirectory,
-      filename: "lib.js",
+      filename:
+        (opts.bundleName || "lib") +
+        (process.env.NODE_ENV === "development" ? ".dev" : "") +
+        ".js",
       library: opts.namespace,
       libraryTarget: "umd"
     },
+    devtool: "source-map",
+    mode: process.env.NODE_ENV,
+    performance: {
+      maxEntrypointSize: 512000,
+      maxAssetSize: 512000
+    },
     resolve: {
-      extensions: [".web.js", ".mjs", ".js", ".json", ".web.jsx", ".jsx"]
+      extensions: [
+        ".web.js",
+        ".mjs",
+        ".js",
+        ".json",
+        ".web.jsx",
+        ".jsx",
+        ".ts",
+        ".tsx"
+      ]
     },
     plugins: [
       new webpack.DefinePlugin({
@@ -23,7 +42,7 @@ module.exports = opts => {
       strictExportPresence: true,
       rules: [
         {
-          test: /\.(js|jsx|mjs)$/,
+          test: /\.(ts|tsx|js|jsx|mjs)$/,
           enforce: "pre",
           use: [
             {
@@ -34,18 +53,24 @@ module.exports = opts => {
           include: opts.sourceDirectory
         },
         {
-          test: /\.(js|jsx|mjs)$/,
+          test: /\.(js|jsx|mjs|tsx|ts)$/,
           use: {
             loader: "babel-loader",
             options: {
-              presets: ["@babel/preset-react", "@babel/preset-env"],
+              presets: [
+                "@babel/preset-react",
+                "@babel/preset-env",
+                "@babel/preset-typescript"
+              ],
               plugins: [
                 "@babel/plugin-proposal-class-properties",
-                "@babel/plugin-syntax-export-default-from"
+                "@babel/plugin-syntax-export-default-from",
+                ...(process.env.NODE_ENV === "production"
+                  ? ["transform-react-remove-prop-types"]
+                  : [])
               ]
             }
-          },
-          include: opts.sourceDirectory
+          }
         }
       ]
     }

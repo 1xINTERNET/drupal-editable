@@ -3,6 +3,7 @@ module.exports = {
   setupFiles: ["./setupTests.js"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   collectCoverage: true,
+  coverageReporters: ["lcov"],
   coveragePathIgnorePatterns: [
     "^setupTests.js$",
     "(tests/.*.mock).(jsx?|tsx?)$"
