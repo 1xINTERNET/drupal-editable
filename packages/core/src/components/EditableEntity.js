@@ -247,10 +247,12 @@ export class EditableEntityPresentational extends PureComponent {
 
     return children({
       change: this.change,
-      save: this.save,
-      remove: this.remove,
       getData: this.getData,
       getAllData: this.getAllData,
+      remove: this.remove,
+      reset: this.reset,
+      resetAll: this.resetAll,
+      save: this.save,
       creating,
       error,
       saving,

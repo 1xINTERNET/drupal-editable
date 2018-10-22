@@ -129,6 +129,8 @@ describe("EditableEntity", () => {
       change,
       save,
       remove,
+      reset,
+      resetAll,
       getData,
       getAllData,
       saving,
@@ -138,6 +140,8 @@ describe("EditableEntity", () => {
     } = renderFn.mock.calls[0][0];
     expect(change).toBeDefined();
     expect(remove).toBeDefined();
+    expect(reset).toBeDefined();
+    expect(resetAll).toBeDefined();
     expect(save).toBeDefined();
     expect(getData).toBeDefined();
     expect(getAllData).toBeDefined();
@@ -240,7 +244,7 @@ describe("EditableEntity", () => {
     expect(firstCallArg(onSaveFn)).toEqual(ENTITY_BASICS);
   });
 
-  it("should set the correct saving state when saving", async done => {
+  it("should set the correct saving state when saving", async () => {
     await component.instance().change(FIELD_1_ADDRESS, CHANGED_FIELD_1_VALUE);
     component.instance().save();
     expect(component.state("changes")).toEqual({
