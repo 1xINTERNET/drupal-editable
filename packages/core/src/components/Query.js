@@ -6,6 +6,8 @@ import { DataSet } from ".";
 import { selectApiIsReady } from "../selectors";
 
 export class QueryPresentational extends PureComponent {
+  static displayName = "Query";
+
   static propTypes = {
     children: PropTypes.func.isRequired,
     bundle: PropTypes.string.isRequired,

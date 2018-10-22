@@ -17,5 +17,10 @@ export {
 } from "redux-json-api";
 
 export { createStore } from "./utils";
-export { DataSet, Query, EditableEntity } from "./components";
+export {
+  DataSet,
+  Query,
+  EditableEntity,
+  EditableEntityForm
+} from "./components";
 export { getQueryFromEntityReference, getQueryFromRIO } from "./normalizers";

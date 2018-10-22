@@ -29,7 +29,8 @@
     "webpack-cli": "^3.1.2"
   },
   "config": {
-    "namespace": "Editable_SevenBaseComponents"
+    "namespace": "Editable_SevenBaseComponents",
+    "bundleName": "editable-seven-base-components"
   },
   "dependencies": {
     "@drupal-editable/core": "^0.3.2"

@@ -2,7 +2,6 @@ const merge = require("webpack-merge");
 const fs = require("fs");
 const path = require("path");
 const baseConfig = require("./config/base.config");
-const buildConfig = require("./config/build.config");
 const externalConfig = require("./config/external.config.js");
 
 module.exports = () => {
@@ -14,5 +13,5 @@ module.exports = () => {
     ...pckg.config
   };
 
-  return merge(baseConfig(opts), buildConfig(opts), externalConfig(opts));
+  return merge(baseConfig(opts), externalConfig(opts));
 };
