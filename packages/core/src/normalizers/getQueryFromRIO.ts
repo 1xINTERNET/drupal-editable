@@ -1,24 +1,37 @@
+import { ResourceIdentifierObject } from "jsonapi-typescript";
+
+export interface QueryParams {
+  bundle: string;
+  type: string;
+  uuid: string;
+}
+
 /**
  * Transform a Resource Identifier Object into an object which can
  * be passed to the Query component to resolve that entity.
  *
- * @param {object} relationship The resource identifier object
- * @return {object|object[]} An object containing the props to query the entity
+ * @param {ResourceIdentifierObject|ResourceIdentifierObject[]} relationship The resource identifier object
+ * @return {QueryParams|QueryParams[]} An object containing the props to query the entity
  */
-export const getQueryFromRIO = relationship => {
+export const getQueryFromRIO = (
+  relationship: ResourceIdentifierObject | ResourceIdentifierObject[]
+): QueryParams => {
   // Handle the data property.
   const data = Array.isArray(relationship)
     ? relationship
-    : relationship.data
-      ? relationship.data
+    : (relationship as any).data
+      ? (relationship as any).data
       : relationship;
 
   // Handle many-to-many relationships.
   if (Array.isArray(data)) {
-    return data.map(getQueryFromRIO);
+    return (data as any).map(getQueryFromRIO);
   }
 
-  const { id: uuid, type: typeString } = relationship;
+  const {
+    id: uuid,
+    type: typeString
+  } = relationship as ResourceIdentifierObject;
   const [bundle, type] = typeString.split("--");
 
   return {

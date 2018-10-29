@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "jsx": "react",
     "rootDir": ".",
     "outDir": "dist",
     "baseUrl": "./packages",
-    "allowJs": true,
+    "allowJs": false,
     "noImplicitAny": false,
     "module": "commonjs",
     "target": "es5",
