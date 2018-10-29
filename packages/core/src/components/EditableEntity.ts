@@ -1,28 +1,54 @@
-import { PureComponent } from "react";
-import PropTypes from "prop-types";
+import * as React from "react";
 import { connect } from "react-redux";
 import { updateResource, createResource, deleteResource } from "redux-json-api";
 import set from "immutable-set";
 import get from "lodash.get";
-import debounce from "lodash.debounce";
+import { ResourceIdentifierObject } from "jsonapi-typescript";
+import { Dispatch } from "redux";
 
 import { apiEndpointConstructor } from "../utils";
 
-export class EditableEntityPresentational extends PureComponent {
-  static displayName = "EditableEntity";
+export interface EditableEntityChildrenArg {
+  change: (propPath: string, propValue: any) => Promise<{}>;
+  getData: (propPath: string, def: any) => any;
+  getAllData: () => object;
+  remove: () => Promise<void>;
+  reset: (propPath?: string) => Promise<{}>;
+  resetAll: () => Promise<{}>
+  save: () => Promise<void>;
+  creating: boolean;
+  error: string;
+  saving: string[];
+  removing: boolean;
+  working: boolean;
+}
 
-  static propTypes = {
-    data: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
-      data: PropTypes.object
-    }),
-    onCreate: PropTypes.func,
-    onSave: PropTypes.func,
-    onRemove: PropTypes.func,
-    children: PropTypes.func.isRequired,
-    dispatch: PropTypes.func.isRequired
+export interface EditableEntityProps {
+  data: any;
+  onCreate: (rio: ResourceIdentifierObject) => null;
+  onSave: (rio: ResourceIdentifierObject) => null;
+  onRemove: (rio: ResourceIdentifierObject) => null;
+  children: (arg: EditableEntityChildrenArg) => React.ReactElement<any>;
+  dispatch: Dispatch;
+}
+
+export interface EditableEntityState {
+  changes: {
+    [propPath: string]: any;
   };
+  creating: boolean;
+  deleting: boolean;
+  error: string;
+  removing: boolean;
+  saving: string[];
+  working: boolean;
+}
+
+export class EditableEntityPresentational extends React.PureComponent<
+  EditableEntityProps,
+  EditableEntityState
+> {
+  static displayName = "EditableEntity";
 
   static defaultProps = {
     data: null,
@@ -36,7 +62,8 @@ export class EditableEntityPresentational extends PureComponent {
     creating: false,
     deleting: false,
     error: null,
-    saving: false,
+    removing: false,
+    saving: null,
     working: false
   };
 
@@ -49,7 +76,7 @@ export class EditableEntityPresentational extends PureComponent {
    * @param {any} def The default value to return if nothing was found
    * @return {any} The value at that address or the default
    */
-  getData = (propPath, def) => {
+  getData = (propPath: string, def?: any): any => {
     const { changes } = this.state;
     const { data } = this.props;
     return get(changes, propPath) || get(data, propPath, def);
@@ -60,7 +87,7 @@ export class EditableEntityPresentational extends PureComponent {
    *
    * @return {object} The entity with changes applied
    */
-  getAllData = () => {
+  getAllData = (): object => {
     const { data } = this.props;
     return this._applyChanges(data);
   };
@@ -70,9 +97,9 @@ export class EditableEntityPresentational extends PureComponent {
    *
    * @param {string} propPath The dot path to the property to change
    * @param {any} propValue The value to set the field property to
-   * @return {Promise<void>} Promise resolved after the state is updated
+   * @return {Promise<{}>} Promise resolved after the state is updated
    */
-  change = async (propPath, propValue) =>
+  change = async (propPath: string, propValue: any): Promise<{}> =>
     this._setState(({ changes }) => ({
       changes: { ...changes, [propPath]: propValue }
     }));
@@ -82,7 +109,7 @@ export class EditableEntityPresentational extends PureComponent {
    *
    * @return {Promise<void>} Resolved when the entity was updated
    */
-  save = async () => {
+  save = async (): Promise<void> => {
     const { dispatch, data, onCreate, onSave } = this.props;
     const { changes } = this.state;
     const isNew = !data;
@@ -163,17 +190,17 @@ export class EditableEntityPresentational extends PureComponent {
   /**
    * Clear all local changes
    *
-   * @return {Promise<void>} Resolves when the state was updated
+   * @return {Promise<{}>} Resolves when the state was updated
    */
-  resetAll = async () => this._setState({ changes: null });
+  resetAll = async (): Promise<{}> => this._setState({ changes: null });
 
   /**
    * Clear the change for one field
    *
    * @param {string} propName The address of the field to reset
-   * @return {Promise<void>} Resolves when the state was updated
+   * @return {Promise<{}>} Resolves when the state was updated
    */
-  reset = async propName => {
+  reset = async (propName: string): Promise<{}> => {
     const { changes } = this.state;
     const newChanges = { ...changes };
     delete newChanges[propName];
@@ -186,7 +213,7 @@ export class EditableEntityPresentational extends PureComponent {
    * @private
    * @param {string} str The string to print
    */
-  _log(str) {
+  _log(str: string): void {
     // eslint-disable-next-line no-console-log
     console.error(str);
   }
@@ -196,9 +223,9 @@ export class EditableEntityPresentational extends PureComponent {
    *
    * @private
    * @param {any} state The parameter passed to setState
-   * @return {Promise<void>} Resolved when the state was updated
+   * @return {Promise<{}>} Resolved when the state was updated
    */
-  async _setState(state) {
+  async _setState(state: any): Promise<{}> {
     return new Promise(res => this.setState(state, res));
   }
 
@@ -212,7 +239,10 @@ export class EditableEntityPresentational extends PureComponent {
    * properties of complex fields to be updated.
    * @return {object} The changed object
    */
-  _applyChanges(initialObject, completeComplexFields) {
+  _applyChanges(
+    initialObject: object,
+    completeComplexFields?: boolean
+  ): object {
     const { changes } = this.state;
     const { data } = this.props;
     return !changes

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "rootDir": ".",
+    "outDir": "dist",
+    "baseUrl": "./packages",
+    "allowJs": true,
+    "noImplicitAny": false,
+    "module": "commonjs",
+    "target": "es5",
+    "sourceMap": true,
+    "paths": {
+      "@drupal-editable/*": ["./*/src"]
+    },
+    "lib": ["es2015"]
+  }
+}

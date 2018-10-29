@@ -20,21 +20,21 @@
   },
   "bugs": "https://github.com/1xINTERNET/drupal-editable/issues",
   "devDependencies": {
-    "cross-env": "^5.2.0",
-    "eslint": "^5.6.1",
-    "jest": "^23.6.0",
-    "npm-run-all": "^4.1.3",
-    "prettier": "^1.14.3",
+    "@babel/polyfill": "^7.0.0",
+    "@types/jest": "^23.3.8",
+    "@types/react": "^16.4.18",
+    "@types/react-dom": "^16.0.9",
+    "@types/redux": "^3.6.0",
+    "@types/whatwg-fetch": "^0.0.33",
+    "jsonapi-typescript": "^0.0.9",
     "redux-json-api": "git://github.com/mspae/redux-json-api.git#168-custom-url-construction--lib",
-    "rimraf": "^2.6.2",
+    "ts-loader": "^5.2.2",
+    "typescript": "^3.1.3",
+    "webpack": "^4.23.1",
     "webpack-cli": "^3.1.2"
-  },
-  "config": {
-    "namespace": "Editable_Core",
-    "isEditableCore": "true",
-    "bundleName": "editable-core"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "dependencies": {}
 }

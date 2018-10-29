@@ -1,24 +1,28 @@
-import React, { PureComponent } from "react";
-import PropTypes from "prop-types";
+import * as React from "react";
 import { readEndpoint } from "redux-json-api";
+import { Dispatch } from 'redux';
 import { connect } from "react-redux";
 import { DataSet } from ".";
 import { selectApiIsReady } from "../selectors";
+import { ResourceIdentifierObject } from 'jsonapi-typescript';
 
-export class QueryPresentational extends PureComponent {
+export interface QueryProps {
+  children: any;
+  bundle: string;
+  type: string;
+  dispatch: Dispatch;
+  uuid: string;
+  apiIsReady: boolean;
+}
+
+export interface QueryState {
+  loading: boolean;
+  error: string;
+  resourceIds: ResourceIdentifierObject[];
+}
+
+export class QueryPresentational extends React.PureComponent<QueryProps, QueryState> {
   static displayName = "Query";
-
-  static propTypes = {
-    children: PropTypes.func.isRequired,
-    bundle: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    dispatch: PropTypes.func.isRequired,
-    uuid: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.arrayOf(PropTypes.string)
-    ]),
-    apiIsReady: PropTypes.bool
-  };
 
   static defaultProps = {
     uuid: null,
@@ -27,7 +31,8 @@ export class QueryPresentational extends PureComponent {
 
   state = {
     loading: false,
-    resourceIds: null
+    resourceIds: null,
+    error: null
   };
 
   componentDidMount() {

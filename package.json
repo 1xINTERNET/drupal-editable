@@ -11,18 +11,6 @@
     "commit": "git-cz"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-syntax-export-default-from": "^7.0.0",
-    "@babel/polyfill": "^7.0.0",
-    "@babel/preset-env": "^7.1.0",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/preset-typescript": "^7.1.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^10.0.1",
-    "babel-jest": "^23.6.0",
-    "babel-loader": "^8.0.4",
-    "babel-plugin-transform-react-remove-prop-types": "^0.4.19",
     "classnames": "^2.2.6",
     "cross-env": "^5.2.0",
     "cz-conventional-changelog": "^2.1.0",
@@ -65,5 +53,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
