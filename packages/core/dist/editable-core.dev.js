@@ -26659,59 +26659,122 @@ function (_PureComponent) {
       resourceIds: null
     });
 
-    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "fetchData",
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "hydrateStore",
     /*#__PURE__*/
     _asyncToGenerator(
     /*#__PURE__*/
     regeneratorRuntime.mark(function _callee() {
-      var _this$props, dispatch, bundle, type, uuid, endpoint, _ref2, resourceIds;
+      var _this$props, resourceData, dispatch, resourceIds;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
               _context.prev = 0;
-              _this$props = _this.props, dispatch = _this$props.dispatch, bundle = _this$props.bundle, type = _this$props.type, uuid = _this$props.uuid;
+              _this$props = _this.props, resourceData = _this$props.resourceData, dispatch = _this$props.dispatch;
+              _context.next = 4;
+              return _this._setState({
+                loading: true
+              });
+
+            case 4:
+              _context.next = 6;
+              return dispatch(Object(redux_json_api__WEBPACK_IMPORTED_MODULE_2__["hydrateStore"])({
+                data: resourceData
+              }));
+
+            case 6:
+              resourceIds = Array.isArray(resourceData) ? resourceData.map(function (entity) {
+                return {
+                  type: entity.type,
+                  id: entity.id
+                };
+              }) : {
+                type: resourceData.type,
+                id: resourceData.id
+              };
+              _context.next = 9;
+              return _this._setState({
+                loading: false,
+                resourceIds: resourceIds
+              });
+
+            case 9:
+              _context.next = 16;
+              break;
+
+            case 11:
+              _context.prev = 11;
+              _context.t0 = _context["catch"](0);
+              // eslint-disable-next-line no-console
+              console.error(_context.t0);
+              _context.next = 16;
+              return _this._setState({
+                loading: false,
+                error: _context.t0
+              });
+
+            case 16:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this, [[0, 11]]);
+    })));
+
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "fetchData",
+    /*#__PURE__*/
+    _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee2() {
+      var _this$props2, dispatch, bundle, type, uuid, endpoint, _ref3, resourceIds;
+
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.prev = 0;
+              _this$props2 = _this.props, dispatch = _this$props2.dispatch, bundle = _this$props2.bundle, type = _this$props2.type, uuid = _this$props2.uuid;
               endpoint = "".concat(type, "/").concat(bundle).concat(uuid ? "/".concat(uuid) : "");
-              _context.next = 5;
+              _context2.next = 5;
               return _this._setState({
                 loading: true
               });
 
             case 5:
-              _context.next = 7;
+              _context2.next = 7;
               return dispatch(Object(redux_json_api__WEBPACK_IMPORTED_MODULE_2__["readEndpoint"])(endpoint));
 
             case 7:
-              _ref2 = _context.sent;
-              resourceIds = _ref2.body.data;
-              _context.next = 11;
+              _ref3 = _context2.sent;
+              resourceIds = _ref3.body.data;
+              _context2.next = 11;
               return _this._setState({
                 loading: false,
                 resourceIds: resourceIds
               });
 
             case 11:
-              _context.next = 18;
+              _context2.next = 18;
               break;
 
             case 13:
-              _context.prev = 13;
-              _context.t0 = _context["catch"](0);
+              _context2.prev = 13;
+              _context2.t0 = _context2["catch"](0);
               // eslint-disable-next-line no-console
-              console.error(_context.t0);
-              _context.next = 18;
+              console.error(_context2.t0);
+              _context2.next = 18;
               return _this._setState({
                 loading: false,
-                error: _context.t0
+                error: _context2.t0
               });
 
             case 18:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
         }
-      }, _callee, this, [[0, 13]]);
+      }, _callee2, this, [[0, 13]]);
     })));
 
     return _this;
@@ -26720,7 +26783,13 @@ function (_PureComponent) {
   _createClass(QueryPresentational, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var apiIsReady = this.props.apiIsReady;
+      var _this$props3 = this.props,
+          apiIsReady = _this$props3.apiIsReady,
+          resourceData = _this$props3.resourceData;
+
+      if (resourceData) {
+        return this.hydrateStore();
+      }
 
       if (apiIsReady) {
         this.fetchData();
@@ -26728,20 +26797,21 @@ function (_PureComponent) {
     }
   }, {
     key: "componentDidUpdate",
-    value: function componentDidUpdate(_ref3) {
-      var apiWasReady = _ref3.apiIsReady;
-      var apiIsReady = this.props.apiIsReady;
+    value: function componentDidUpdate(_ref4) {
+      var apiWasReady = _ref4.apiIsReady,
+          prevResourceData = _ref4.resourceData;
+      var _this$props4 = this.props,
+          apiIsReady = _this$props4.apiIsReady,
+          resourceData = _this$props4.resourceData;
 
-      if (!apiWasReady && apiIsReady) {
+      if (prevResourceData !== resourceData) {
+        return this.hydrateStore();
+      }
+
+      if (!prevResourceData && !resourceData && !apiWasReady && apiIsReady) {
         this.fetchData();
       }
     }
-    /**
-     * Fetch the actual data from the API
-     *
-     * @return {Promise<void>} Resolved when the data was retrieved
-     */
-
   }, {
     key: "_setState",
 
@@ -26754,23 +26824,23 @@ function (_PureComponent) {
     value: function () {
       var _setState2 = _asyncToGenerator(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee2(state) {
+      regeneratorRuntime.mark(function _callee3(state) {
         var _this2 = this;
 
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
-                return _context2.abrupt("return", new Promise(function (res) {
+                return _context3.abrupt("return", new Promise(function (res) {
                   return _this2.setState(state, res);
                 }));
 
               case 1:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee3, this);
       }));
 
       return function _setState(_x) {
@@ -26805,12 +26875,14 @@ _defineProperty(QueryPresentational, "propTypes", {
   type: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string.isRequired,
   dispatch: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func.isRequired,
   uuid: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string, prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string)]),
-  apiIsReady: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool
+  apiIsReady: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+  resourceData: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object
 });
 
 _defineProperty(QueryPresentational, "defaultProps", {
   uuid: null,
-  apiIsReady: false
+  apiIsReady: false,
+  resourceData: null
 });
 
 var Query = Object(react_redux__WEBPACK_IMPORTED_MODULE_3__["connect"])(function (state) {
@@ -27188,89 +27260,58 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 
 
 
+var createStore = function createStore(_ref) {
+  var _ref$reducers = _ref.reducers,
+      reducers = _ref$reducers === void 0 ? {} : _ref$reducers,
+      _ref$middlewares = _ref.middlewares,
+      middlewares = _ref$middlewares === void 0 ? [] : _ref$middlewares,
+      _ref$enhancers = _ref.enhancers,
+      enhancers = _ref$enhancers === void 0 ? [] : _ref$enhancers,
+      csrfTokenEndpoint = _ref.csrfTokenEndpoint,
+      apiEndpoint = _ref.apiEndpoint,
+      _ref$loadCSRFToken = _ref.loadCSRFToken,
+      loadCSRFToken = _ref$loadCSRFToken === void 0 ? true : _ref$loadCSRFToken;
 
-var createStore =
-/*#__PURE__*/
-function () {
-  var _ref2 = _asyncToGenerator(
-  /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee(_ref) {
-    var _ref$reducers, reducers, _ref$middlewares, middlewares, _ref$enhancers, enhancers, csrfTokenEndpoint, apiEndpoint, _ref$loadCSRFToken, loadCSRFToken, reducer, store, token;
+  try {
+    if (!apiEndpoint) {
+      throw new Error("You will need to call createStore with an `apiEndpoint` pointing to the publicly accessible URL to your JSON:API!");
+    }
 
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            _ref$reducers = _ref.reducers, reducers = _ref$reducers === void 0 ? {} : _ref$reducers, _ref$middlewares = _ref.middlewares, middlewares = _ref$middlewares === void 0 ? [] : _ref$middlewares, _ref$enhancers = _ref.enhancers, enhancers = _ref$enhancers === void 0 ? [] : _ref$enhancers, csrfTokenEndpoint = _ref.csrfTokenEndpoint, apiEndpoint = _ref.apiEndpoint, _ref$loadCSRFToken = _ref.loadCSRFToken, loadCSRFToken = _ref$loadCSRFToken === void 0 ? true : _ref$loadCSRFToken;
-            _context.prev = 1;
+    if (loadCSRFToken && !csrfTokenEndpoint) {
+      throw new Error("Either call createStore with `loadCSRFToken: false ` or provide an `csrfTokenEndpoint`!");
+    }
 
-            if (apiEndpoint) {
-              _context.next = 4;
-              break;
-            }
+    var reducer = Object(redux__WEBPACK_IMPORTED_MODULE_0__["combineReducers"])(_objectSpread({
+      api: redux_json_api__WEBPACK_IMPORTED_MODULE_3__["reducer"]
+    }, reducers));
+    var store = Object(redux__WEBPACK_IMPORTED_MODULE_0__["createStore"])(reducer, redux_devtools_extension__WEBPACK_IMPORTED_MODULE_2__["composeWithDevTools"].apply(void 0, [redux__WEBPACK_IMPORTED_MODULE_0__["applyMiddleware"].apply(void 0, [redux_thunk__WEBPACK_IMPORTED_MODULE_1__["default"]].concat(_toConsumableArray(middlewares)))].concat(_toConsumableArray(enhancers))));
 
-            throw new Error("You will need to call createStore with an `apiEndpoint` pointing to the publicly accessible URL to your JSON:API!");
+    if (loadCSRFToken) {
+      fetch(csrfTokenEndpoint).then(function (res) {
+        return res.text();
+      }).then(function (token) {
+        store.dispatch(Object(redux_json_api__WEBPACK_IMPORTED_MODULE_3__["setAxiosConfig"])({
+          baseURL: apiEndpoint,
+          headers: _objectSpread({}, token ? {
+            "X-CSRF-Token": token
+          } : {})
+        }));
+      });
+    } else {
+      store.dispatch(Object(redux_json_api__WEBPACK_IMPORTED_MODULE_3__["setAxiosConfig"])({
+        baseURL: apiEndpoint
+      }));
+    }
 
-          case 4:
-            if (!(loadCSRFToken && !csrfTokenEndpoint)) {
-              _context.next = 6;
-              break;
-            }
-
-            throw new Error("Either call createStore with `loadCSRFToken: false ` or provide an `csrfTokenEndpoint`!");
-
-          case 6:
-            reducer = Object(redux__WEBPACK_IMPORTED_MODULE_0__["combineReducers"])(_objectSpread({
-              api: redux_json_api__WEBPACK_IMPORTED_MODULE_3__["reducer"]
-            }, reducers));
-            store = Object(redux__WEBPACK_IMPORTED_MODULE_0__["createStore"])(reducer, redux_devtools_extension__WEBPACK_IMPORTED_MODULE_2__["composeWithDevTools"].apply(void 0, [redux__WEBPACK_IMPORTED_MODULE_0__["applyMiddleware"].apply(void 0, [redux_thunk__WEBPACK_IMPORTED_MODULE_1__["default"]].concat(_toConsumableArray(middlewares)))].concat(_toConsumableArray(enhancers))));
-
-            if (!loadCSRFToken) {
-              _context.next = 12;
-              break;
-            }
-
-            _context.next = 11;
-            return fetch(csrfTokenEndpoint).then(function (res) {
-              return res.text();
-            });
-
-          case 11:
-            token = _context.sent;
-
-          case 12:
-            store.dispatch(Object(redux_json_api__WEBPACK_IMPORTED_MODULE_3__["setAxiosConfig"])({
-              baseURL: apiEndpoint,
-              headers: _objectSpread({}, token ? {
-                "X-CSRF-Token": token
-              } : {})
-            }));
-            return _context.abrupt("return", store);
-
-          case 16:
-            _context.prev = 16;
-            _context.t0 = _context["catch"](1);
-            console.error("Error creating editable store!", _context.t0);
-
-          case 19:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee, this, [[1, 16]]);
-  }));
-
-  return function createStore(_x) {
-    return _ref2.apply(this, arguments);
-  };
-}();
+    return store;
+  } catch (e) {
+    console.error("Error creating editable store!", e);
+  }
+};
 
 /***/ }),
 
