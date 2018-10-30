@@ -7,7 +7,7 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { reducer as api, setAxiosConfig } from "redux-json-api";
 
-export const createStore = async ({
+export const createStore = ({
   reducers = {},
   middlewares = [],
   enhancers = [],
@@ -37,19 +37,26 @@ export const createStore = async ({
       composeWithDevTools(applyMiddleware(thunk, ...middlewares), ...enhancers)
     );
 
-    let token;
     if (loadCSRFToken) {
-      token = await fetch(csrfTokenEndpoint).then(res => res.text());
+      fetch(csrfTokenEndpoint)
+        .then(res => res.text())
+        .then(token => {
+          store.dispatch(
+            setAxiosConfig({
+              baseURL: apiEndpoint,
+              headers: {
+                ...(token ? { "X-CSRF-Token": token } : {})
+              }
+            })
+          );
+        });
+    } else {
+      store.dispatch(
+        setAxiosConfig({
+          baseURL: apiEndpoint
+        })
+      );
     }
-
-    store.dispatch(
-      setAxiosConfig({
-        baseURL: apiEndpoint,
-        headers: {
-          ...(token ? { "X-CSRF-Token": token } : {})
-        }
-      })
-    );
 
     return store;
   } catch (e) {
