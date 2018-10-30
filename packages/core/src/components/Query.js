@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import { readEndpoint } from "redux-json-api";
+import { readEndpoint, hydrateStore } from "redux-json-api";
 import { connect } from "react-redux";
 import { DataSet } from ".";
 import { selectApiIsReady } from "../selectors";
@@ -17,12 +17,14 @@ export class QueryPresentational extends PureComponent {
       PropTypes.string,
       PropTypes.arrayOf(PropTypes.string)
     ]),
-    apiIsReady: PropTypes.bool
+    apiIsReady: PropTypes.bool,
+    resourceData: PropTypes.object
   };
 
   static defaultProps = {
     uuid: null,
-    apiIsReady: false
+    apiIsReady: false,
+    resourceData: null
   };
 
   state = {
@@ -31,18 +33,52 @@ export class QueryPresentational extends PureComponent {
   };
 
   componentDidMount() {
-    const { apiIsReady } = this.props;
+    const { apiIsReady, resourceData } = this.props;
+    if (resourceData) {
+      return this.hydrateStore();
+    }
     if (apiIsReady) {
       this.fetchData();
     }
   }
 
-  componentDidUpdate({ apiIsReady: apiWasReady }) {
-    const { apiIsReady } = this.props;
-    if (!apiWasReady && apiIsReady) {
+  componentDidUpdate({
+    apiIsReady: apiWasReady,
+    resourceData: prevResourceData
+  }) {
+    const { apiIsReady, resourceData } = this.props;
+    if (prevResourceData !== resourceData) {
+      return this.hydrateStore();
+    }
+    if (!prevResourceData && !resourceData && !apiWasReady && apiIsReady) {
       this.fetchData();
     }
   }
+
+  hydrateStore = async () => {
+    try {
+      const { resourceData, dispatch } = this.props;
+      await this._setState({
+        loading: true
+      });
+      await dispatch(hydrateStore({ data: resourceData }));
+      const resourceIds = Array.isArray(resourceData)
+        ? resourceData.map(entity => ({
+            type: entity.type,
+            id: entity.id
+          }))
+        : { type: resourceData.type, id: resourceData.id };
+
+      await this._setState({
+        loading: false,
+        resourceIds
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+      await this._setState({ loading: false, error: e });
+    }
+  };
 
   /**
    * Fetch the actual data from the API
