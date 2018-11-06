@@ -27,6 +27,7 @@ import {
   EditableEntityForm
 } from "./components";
 import { getQueryFromEntityReference, getQueryFromRIO } from "./normalizers";
+import { selectResources } from "./selectors";
 
 export {
   get,
@@ -49,5 +50,6 @@ export {
   EditableEntity,
   EditableEntityForm,
   getQueryFromEntityReference,
-  getQueryFromRIO
+  getQueryFromRIO,
+  selectResources
 };
