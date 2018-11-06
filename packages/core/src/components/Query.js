@@ -18,13 +18,15 @@ export class QueryPresentational extends PureComponent {
       PropTypes.arrayOf(PropTypes.string)
     ]),
     apiIsReady: PropTypes.bool,
-    resourceData: PropTypes.object
+    resourceData: PropTypes.object,
+    skip: PropTypes.bool
   };
 
   static defaultProps = {
     uuid: null,
     apiIsReady: false,
-    resourceData: null
+    resourceData: null,
+    skip: false
   };
 
   state = {
@@ -37,7 +39,7 @@ export class QueryPresentational extends PureComponent {
     if (resourceData) {
       return this.hydrateStore();
     }
-    if (apiIsReady) {
+    if (apiIsReady && !skip) {
       this.fetchData();
     }
   }
@@ -46,11 +48,17 @@ export class QueryPresentational extends PureComponent {
     apiIsReady: apiWasReady,
     resourceData: prevResourceData
   }) {
-    const { apiIsReady, resourceData } = this.props;
+    const { apiIsReady, resourceData, skip } = this.props;
     if (prevResourceData !== resourceData) {
       return this.hydrateStore();
     }
-    if (!prevResourceData && !resourceData && !apiWasReady && apiIsReady) {
+    if (
+      !skip &&
+      !prevResourceData &&
+      !resourceData &&
+      !apiWasReady &&
+      apiIsReady
+    ) {
       this.fetchData();
     }
   }
