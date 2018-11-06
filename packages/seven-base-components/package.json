@@ -1,6 +1,6 @@
 {
   "name": "@drupal-editable/seven-base-components",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Provides commonly used components to decouple parts of the Drupal 8 admin UI",
   "main": "src/index.js",
   "scripts": {
@@ -33,7 +33,7 @@
     "bundleName": "editable-seven-base-components"
   },
   "dependencies": {
-    "@drupal-editable/core": "^0.5.0"
+    "@drupal-editable/core": "^0.5.1"
   },
   "publishConfig": {
     "access": "public"
