@@ -26933,7 +26933,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
-/*! exports provided: get, set, debounce, cx, connect, Provider, css, keyframes, createSelector, createResource, readEndpoint, updateResource, deleteResource, hydrateStore, createStore, DataSet, Query, EditableEntity, EditableEntityForm, getQueryFromEntityReference, getQueryFromRIO */
+/*! exports provided: get, set, debounce, cx, connect, Provider, css, keyframes, createSelector, createResource, readEndpoint, updateResource, deleteResource, hydrateStore, createStore, DataSet, Query, EditableEntity, EditableEntityForm, getQueryFromEntityReference, getQueryFromRIO, selectResources */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -26993,6 +26993,9 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getQueryFromRIO", function() { return _normalizers__WEBPACK_IMPORTED_MODULE_11__["getQueryFromRIO"]; });
 
+/* harmony import */ var _selectors__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./selectors */ "./src/selectors/index.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "selectResources", function() { return _selectors__WEBPACK_IMPORTED_MODULE_12__["selectResources"]; });
+
  // Utilities:
 
 
@@ -27004,6 +27007,7 @@ __webpack_require__.r(__webpack_exports__);
  // API actions:
 
  // Editable core functionality:
+
 
 
 
