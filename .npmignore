@@ -1,0 +1,7 @@
+coverage
+.vscode
+node_modules
+CODE_OF_CONDUCT.md
+setupTests.js
+*.spec.ts
+*.spec.js
