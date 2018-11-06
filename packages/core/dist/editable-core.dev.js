@@ -26791,7 +26791,7 @@ function (_PureComponent) {
         return this.hydrateStore();
       }
 
-      if (apiIsReady) {
+      if (apiIsReady && !skip) {
         this.fetchData();
       }
     }
@@ -26802,13 +26802,14 @@ function (_PureComponent) {
           prevResourceData = _ref4.resourceData;
       var _this$props4 = this.props,
           apiIsReady = _this$props4.apiIsReady,
-          resourceData = _this$props4.resourceData;
+          resourceData = _this$props4.resourceData,
+          skip = _this$props4.skip;
 
       if (prevResourceData !== resourceData) {
         return this.hydrateStore();
       }
 
-      if (!prevResourceData && !resourceData && !apiWasReady && apiIsReady) {
+      if (!skip && !prevResourceData && !resourceData && !apiWasReady && apiIsReady) {
         this.fetchData();
       }
     }
@@ -26876,13 +26877,15 @@ _defineProperty(QueryPresentational, "propTypes", {
   dispatch: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func.isRequired,
   uuid: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string, prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string)]),
   apiIsReady: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
-  resourceData: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object
+  resourceData: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object,
+  skip: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool
 });
 
 _defineProperty(QueryPresentational, "defaultProps", {
   uuid: null,
   apiIsReady: false,
-  resourceData: null
+  resourceData: null,
+  skip: false
 });
 
 var Query = Object(react_redux__WEBPACK_IMPORTED_MODULE_3__["connect"])(function (state) {
