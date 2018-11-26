@@ -19,7 +19,7 @@ export const getQueryFromRIO = relationship => {
   }
 
   const { id: uuid, type: typeString } = relationship;
-  const [bundle, type] = typeString.split("--");
+  const [type, bundle] = typeString.split("--");
 
   return {
     bundle,
