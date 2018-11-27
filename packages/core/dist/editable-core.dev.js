@@ -27089,8 +27089,8 @@ var getQueryFromRIO = function getQueryFromRIO(relationship) {
 
   var _typeString$split = typeString.split("--"),
       _typeString$split2 = _slicedToArray(_typeString$split, 2),
-      bundle = _typeString$split2[0],
-      type = _typeString$split2[1];
+      type = _typeString$split2[0],
+      bundle = _typeString$split2[1];
 
   return {
     bundle: bundle,
