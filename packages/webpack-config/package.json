@@ -20,7 +20,7 @@
     "webpack-merge": "^4.1.4"
   },
   "devDependencies": {
-    "react-dev-utils": "^5.0.2"
+    "react-dev-utils": "^11.0.4"
   },
   "peerDependencies": {
     "@babel/core": "^7.1.0",
@@ -31,7 +31,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^9.0.0",
     "babel-loader": "^8.0.2",
-    "react-dev-utils": "^5.0.2",
+    "react-dev-utils": "^11.0.4",
     "webpack-cli": "^3.1.1"
   },
   "publishConfig": {
